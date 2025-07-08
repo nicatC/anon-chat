@@ -1,0 +1,19 @@
+java guisini hazir hale getirmek icin
+terminalde anon-chat altinda :nevermind@ubuntu:~/anon-chat$ mvn package
+daha sonra anon-chat/docker klasorune gecip sirasiyla;
+	nevermind@ubuntu:~/anon-chat/docker$ docker compose build --no-cache
+	nevermind@ubuntu:~/anon-chat/docker$ docker compose up -d
+gui acmak icin ayri terminallerde:(diger peerlar da baslatilabilir sadece ben boyle test ettim)
+	nevermind@ubuntu:~/anon-chat$ java -jar target/anon-chat-0.1-SNAPSHOT.jar localhost 6203 //CPeer-3
+	nevermind@ubuntu:~/anon-chat$ java -jar target/anon-chat-0.1-SNAPSHOT.jar localhost 6103 //BPeer-3
+	nevermind@ubuntu:~/anon-chat$ java -jar target/anon-chat-0.1-SNAPSHOT.jar localhost 6002 //APeer-2
+gatewayeler otomatik baslatilir gwA, gwB, gwC(docker-compose.yml den kurmaya calistigim subnet mantigi anlasilabilir)
+
+gatewaylog larina bakmak icin ayri ayri terminallerde:
+	nevermind@ubuntu:~/anon-chat/docker$ docker logs -f a_peer1
+	nevermind@ubuntu:~/anon-chat/docker$ docker logs -f b_peer1
+	nevermind@ubuntu:~/anon-chat/docker$ docker logs -f c_peer1
+
+
+
+Nicat Caliskan 20210702113

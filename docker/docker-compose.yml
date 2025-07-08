@@ -1,0 +1,135 @@
+version: "3.9"
+
+x-common-env: &common-env
+  cap_add:      [ "NET_ADMIN", "NET_RAW" ]
+  privileged:   true
+  build:
+    context: ..
+    dockerfile: docker/Dockerfile
+  volumes:
+    
+    - ../python:/app
+
+networks:
+  subnet_a:
+    driver: bridge
+    ipam: { config: [ { subnet: 10.5.0.0/24 } ] }
+  subnet_b:
+    driver: bridge
+    ipam: { config: [ { subnet: 10.5.1.0/24 } ] }
+  subnet_c:
+    driver: bridge
+    ipam: { config: [ { subnet: 10.5.2.0/24 } ] }
+
+services:
+  #subnetA
+  a_peer1:  #gateway
+    <<: *common-env
+    environment:
+      IS_GATEWAY: "1"
+      NICK: "gwA"
+    container_name: a_peer1
+    hostname:      a_peer1
+    networks:
+      subnet_a: { ipv4_address: 10.5.0.101 }
+      subnet_b: { ipv4_address: 10.5.1.201 }
+      subnet_c: { ipv4_address: 10.5.2.201 }
+    ports: [ "6001:5555" ]
+    volumes:
+      - ../python:/app
+      - ./gateways/a_peer1.txt:/app/gateways.txt
+
+  a_peer2:
+    <<: *common-env
+    container_name: a_peer2
+    hostname:      a_peer2
+    networks: { subnet_a: { ipv4_address: 10.5.0.102 } }
+    ports: [ "6002:5555" ]
+    volumes:
+      - ../python:/app
+      - ./gateways/empty.txt:/app/gateways.txt
+
+  a_peer3:
+    <<: *common-env
+    container_name: a_peer3
+    hostname:      a_peer3
+    networks:
+      subnet_a: { ipv4_address: 10.5.0.103 }
+    ports: [ "6003:5555" ]
+    volumes:
+      - ../python:/app
+      - ./gateways/empty.txt:/app/gateways.txt
+
+  #subnetB
+  b_peer1: # Gateway
+    <<: *common-env
+    environment:
+      IS_GATEWAY: "1"
+      NICK: "gwB"
+    container_name: b_peer1
+    hostname:      b_peer1
+    networks:
+      subnet_b: { ipv4_address: 10.5.1.101 }
+      subnet_a: { ipv4_address: 10.5.0.202 }
+      subnet_c: { ipv4_address: 10.5.2.202 }
+    ports: [ "6101:5555" ]
+    volumes:
+      - ../python:/app
+      - ./gateways/b_peer1.txt:/app/gateways.txt
+
+  b_peer2:
+    <<: *common-env
+    container_name: b_peer2
+    hostname:      b_peer2
+    networks: { subnet_b: { ipv4_address: 10.5.1.102 } }
+    ports: [ "6102:5555" ]
+    volumes:
+      - ../python:/app
+      - ./gateways/empty.txt:/app/gateways.txt
+
+  b_peer3:
+    <<: *common-env
+    container_name: b_peer3
+    hostname:      b_peer3
+    networks: { subnet_b: { ipv4_address: 10.5.1.103 } }
+    ports: [ "6103:5555" ]
+    volumes:
+      - ../python:/app
+      - ./gateways/empty.txt:/app/gateways.txt
+
+  # subnetC
+  c_peer1:  # gateway
+    <<: *common-env
+    environment:
+      IS_GATEWAY: "1"
+      NICK: "gwC"
+    container_name: c_peer1
+    hostname:      c_peer1
+    networks:
+      subnet_c: { ipv4_address: 10.5.2.101 }
+      subnet_a: { ipv4_address: 10.5.0.203 }
+      subnet_b: { ipv4_address: 10.5.1.203 }
+    ports: [ "6201:5555" ]
+    volumes:
+      - ../python:/app
+      - ./gateways/c_peer1.txt:/app/gateways.txt
+
+  c_peer2:
+    <<: *common-env
+    container_name: c_peer2
+    hostname:      c_peer2
+    networks: { subnet_c: { ipv4_address: 10.5.2.102 } }
+    ports: [ "6202:5555" ]
+    volumes:
+      - ../python:/app
+      - ./gateways/empty.txt:/app/gateways.txt
+
+  c_peer3:
+    <<: *common-env
+    container_name: c_peer3
+    hostname:      c_peer3
+    networks: { subnet_c: { ipv4_address: 10.5.2.103 } }
+    ports: [ "6203:5555" ]
+    volumes:
+      - ../python:/app
+      - ./gateways/empty.txt:/app/gateways.txt

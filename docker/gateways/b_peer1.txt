@@ -1,0 +1,2 @@
+10.5.0.101    # a_peer1  (gateway-A’nın A-subnet IP’si)
+10.5.0.203    # c_peer1  (gateway-C’nin A-subnet IP’si)
